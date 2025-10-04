@@ -10,8 +10,8 @@ public interface CategoryService {
 
     CategoryDTO createCategory(CategoryDTO dto);
     List<CategoryDTO> getAllCategory();
-//    CategoryDTO getCategoryById();
-//    CategoryDTO updateCategory(Long id,CategoryDTO dto);
+    CategoryDTO getCategoryById(Long id);
+    CategoryDTO updateCategory(Long id,CategoryDTO dto);
 //    CategoryDTO deleteCategory(Long id);
 
 

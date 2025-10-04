@@ -42,4 +42,19 @@ public class CategoryServiceImpl implements CategoryService {
         List<CategoryDTO> dtoList=categories.stream().map(c->new CategoryDTO(c.getId(),c.getName())).toList();
         return  dtoList;
     }
+
+    @Override
+    public CategoryDTO getCategoryById(Long id) {
+        Category category=categoryRepository.findById(id).orElse(null);
+        CategoryDTO response=new CategoryDTO(category.getId(),category.getName());
+        return response;
+    }
+
+    @Override
+    public CategoryDTO updateCategory(Long id, CategoryDTO dto) {
+        Category category=categoryRepository.findById(id).orElse(null);
+        category.setName(dto.getName());
+        Category updated=categoryRepository.save(category);
+        return new CategoryDTO(updated.getId(), updated.getName());
+    }
 }
