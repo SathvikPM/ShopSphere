@@ -34,10 +34,11 @@
 
 ---
 
-##  Future Enhancements
+## 🔮 Future Enhancements
 
--Add Product CRUD with category relationship 🛍️
--Integrate with React frontend ⚛️
--Add global exception handling 🚨
--Add pagination and search for categories and products 🔍
--Move file storage to cloud (AWS S3 / GCP Storage) ☁️
+- Add Product CRUD with category relationship 🛍️
+- Integrate with React frontend ⚛️
+- Add global exception handling 🚨
+- Add pagination and search for categories and products 🔍
+- Move file storage to cloud (AWS S3 / GCP Storage) ☁️
+
