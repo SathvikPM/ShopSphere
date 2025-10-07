@@ -21,4 +21,6 @@ public class Category {
     @NotBlank(message = "Category name is mandatory")
     @Column(unique = true,nullable = false)
     private String name;
+
+    private String imageUrl;
 }
