@@ -28,7 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
         if(exists){
             throw new RuntimeException("category alredy Exists");
         }
-        String imageUrl=fileStorageService.saveFile(file);
+        String imageUrl=fileStorageService.saveFile(file,"category");
 
         Category category=new Category();
         category.setName(name);
@@ -40,31 +40,38 @@ public class CategoryServiceImpl implements CategoryService {
 
     }
     //    @Override
-//    public List<CategoryDTO> getAllCategory() {
-//        List<Category> categories=categoryRepository.findAll();
-//        List<CategoryDTO> dtoList=categories.stream().map(c->new CategoryDTO(c.getId(),c.getName())).toList();
-//        return  dtoList;
-//    }
+    public List<CategoryDTO> getAllCategory() {
+        List<Category> categories=categoryRepository.findAll();
+        List<CategoryDTO> dtoList=categories.stream().map(c->new CategoryDTO(c.getId(),c.getName(),c.getImageUrl())).toList();
+        return  dtoList;
+    }
 
-//    @Override
-//    public CategoryDTO getCategoryById(Long id) {
-//        Category category=categoryRepository.findById(id).orElse(null);
-////        CategoryDTO response=new CategoryDTO(category.getId(),category.getName());
-//        return response;
-//    }
+    @Override
+    public CategoryDTO getCategoryById(Long id) {
+        Category category=categoryRepository.findById(id).orElse(null);
+        CategoryDTO response=new CategoryDTO(category.getId(),category.getName(),category.getImageUrl());
+        return response;
+    }
 
-//    @Override
-//    public CategoryDTO updateCategory(Long id, CategoryDTO dto) {
-//        Category category=categoryRepository.findById(id).orElse(null);
-//        category.setName(dto.getName());
-//        Category updated=categoryRepository.save(category);
-//        return new CategoryDTO(updated.getId(), updated.getName());
-//    }
+    @Override
+    public CategoryDTO updateCategory(Long id, CategoryDTO dto) {
+        Category category=categoryRepository.findById(id).orElse(null);
+        category.setName(dto.getName());
+        if(dto.getImageUrl()!=null){
+            category.setImageUrl(dto.getImageUrl());
+        }
+        Category updated=categoryRepository.save(category);
+        return new CategoryDTO(updated.getId(), updated.getName(),updated.getImageUrl());
+    }
 
     @Override
     public void deleteCategory(Long id) {
         Category category=categoryRepository.findById(id).orElse(null);
-         categoryRepository.delete(category);
+//         Optionally delete the file
+         if(category!=null){
+             fileStorageService.deleteFile(category.getImageUrl());
+             categoryRepository.delete(category);
+         }
 
 
     }

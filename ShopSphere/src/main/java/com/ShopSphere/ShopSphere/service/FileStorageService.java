@@ -1,69 +1,70 @@
-package com.ShopSphere.ShopSphere.service;  // Defines the package location of this service class
+package com.ShopSphere.ShopSphere.service;
 
-import org.springframework.stereotype.Service;  // Imports Service annotation to mark this class as a Spring service
-import org.springframework.web.multipart.MultipartFile;  // Imports MultipartFile to handle uploaded files
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;  // Imports File class for file handling
-import java.io.IOException;  // Imports IOException to handle file transfer errors
+import java.io.File;
+import java.io.IOException;
 
-@Service  // Marks this class as a Spring-managed service component
+@Service
 public class FileStorageService {
 
-    private final String UPLOAD_DIR = "uploads/";  // Folder where uploaded files will be stored
+    // Reads upload folder name from application.properties
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
     /**
-     * Constructor that ensures the upload directory exists.
-     * If it does not exist, it creates it.
+     * Returns the full absolute path for the upload folder
+     * (e.g., C:\Users\sathv\eclipse-workspace\ShopSphere-uploads\category)
      */
-    public FileStorageService() {
-        File uploadDir = new File(UPLOAD_DIR);  // Creates a File object pointing to the uploads folder
-        if (!uploadDir.exists()) {  // Checks if the folder doesn't exist
-            uploadDir.mkdirs();  // Creates the uploads folder
-        }
+    private String getAbsoluteUploadPath(String subFolder) {
+        String projectPath = System.getProperty("user.dir");  // ✅ gets your project folder dynamically
+        return projectPath + File.separator + uploadDir + File.separator + subFolder;
     }
 
     /**
-     * Saves the given file to the uploads directory.
+     * Saves the uploaded file in a specific subfolder (like "category" or "product")
      *
-     * @param file the uploaded file to be saved
-     * @return the relative file path of the saved file
-     * @throws RuntimeException if the file is empty or saving fails
+     * @param file      uploaded file
+     * @param subFolder subfolder name (example: "category")
+     * @return the relative image path (to store in DB)
      */
-    public String saveFile(MultipartFile file) {
-        if (file.isEmpty()) {  // Checks if the uploaded file is empty
-            throw new RuntimeException("File is empty!");  // Throws error if file is empty
+    public String saveFile(MultipartFile file, String subFolder) {
+        if (file.isEmpty()) {
+            throw new RuntimeException("File is empty!");
         }
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();  // Creates a unique file name using current time
-        File destination = new File(UPLOAD_DIR + fileName);  // Creates file object for saving the file
+
+        String fullPath = getAbsoluteUploadPath(subFolder);
+        File dir = new File(fullPath);
+        if (!dir.exists()) {
+            dir.mkdirs(); // create folder if missing
+        }
+
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        File destination = new File(dir, fileName);
+
         try {
-            file.transferTo(destination);  // Transfers uploaded file to destination
-        } catch (IOException e) {  // Handles IO exception
-            throw new RuntimeException(e);  // Throws runtime exception if transfer fails
+            file.transferTo(destination);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save file: " + e.getMessage(), e);
         }
-        return "/" + UPLOAD_DIR + fileName;  // Returns path of saved file
+
+        // Return a clean relative path for DB (frontend will use this)
+        return "/uploads/" + subFolder + "/" + fileName;
     }
 
     /**
-     * Deletes a file from the uploads directory.
+     * Deletes a stored file
      *
-     * @param filePath the path of the file to delete
-     * @return true if the file was successfully deleted, false otherwise
+     * @param relativePath file path as stored in DB
+     * @return true if successfully deleted, false otherwise
      */
-    public boolean deleteFile(String filePath) {
-        if (filePath == null || filePath.isEmpty())  // Checks if path is invalid
-            return false;  // Returns false if no valid path
+    public boolean deleteFile(String relativePath) {
+        if (relativePath == null || relativePath.isEmpty()) return false;
 
-        File file = new File(filePath.replace("/", ""));  // Creates File object after removing slashes
-        return file.exists() && file.delete();  // Deletes file if it exists and returns true if successful
+        String projectPath = System.getProperty("user.dir");
+        File file = new File(projectPath + File.separator + relativePath);
+        return file.exists() && file.delete();
     }
-
-    /**
-     * Gets the path of the uploads directory.
-     *
-     * @return the upload directory path
-     */
-    public String getUploadDir() {
-        return UPLOAD_DIR;  // Returns upload folder path
-    }
-
 }

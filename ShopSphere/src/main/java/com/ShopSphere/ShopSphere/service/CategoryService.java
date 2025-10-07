@@ -10,9 +10,9 @@ import java.util.List;
 public interface CategoryService {
 
     CategoryDTO createCategory(String name, MultipartFile file);
-//    List<CategoryDTO> getAllCategory();
-//    CategoryDTO getCategoryById(Long id);
-//    CategoryDTO updateCategory(Long id,CategoryDTO dto);
+    List<CategoryDTO> getAllCategory();
+    CategoryDTO getCategoryById(Long id);
+    CategoryDTO updateCategory(Long id,CategoryDTO dto);
     void deleteCategory(Long id);
 
 
