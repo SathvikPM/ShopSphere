@@ -1,6 +1,7 @@
 package com.ShopSphere.ShopSphere.service;
 
 import com.ShopSphere.ShopSphere.dto.CategoryDTO;
+import com.ShopSphere.ShopSphere.dto.CategoryRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,11 +10,11 @@ import java.util.List;
 @Service
 public interface CategoryService {
 
-    CategoryDTO createCategory(String name, MultipartFile file);
-    List<CategoryDTO> getAllCategory();
-    CategoryDTO getCategoryById(Long id);
-    CategoryDTO updateCategory(Long id,CategoryDTO dto);
-    void deleteCategory(Long id);
+    CategoryDTO createCategory(CategoryRequest categoryRequest, MultipartFile file);
+//    List<CategoryDTO> getAllCategory();
+//    CategoryDTO getCategoryById(Long id);
+//    CategoryDTO updateCategory(Long id,CategoryDTO dto);
+//    void deleteCategory(Long id);
 
 
 }

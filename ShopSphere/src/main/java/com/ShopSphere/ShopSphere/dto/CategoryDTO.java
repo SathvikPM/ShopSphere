@@ -15,6 +15,8 @@ public class CategoryDTO {
     @NotBlank(message = "Category name is mandatory")
     private String name;
 
+    private String description;
+
     private String imageUrl;
 
 }
