@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -34,8 +35,8 @@ public class CategoryServiceImpl implements CategoryService {
 
 
         Category category=new Category();
-        category.setName(category.getName());
-        category.setDescription(category.getDescription());
+        category.setName(categoryRequest.getName());
+        category.setDescription(categoryRequest.getDescription());
         category.setImageUrl(imageUrl);
 
         Category saved=categoryRepository.save(category);
@@ -49,41 +50,27 @@ public class CategoryServiceImpl implements CategoryService {
 
     }
 
+    @Override
+    public List<CategoryDTO> getAllCategories() {
+       List<Category> categories=categoryRepository.findAll();
+       return  categories.stream().map(c->{
+           CategoryDTO dto=new CategoryDTO();
+           dto.setName(c.getName());
+           dto.setId(c.getId());
+           dto.setDescription(c.getDescription());
+           dto.setImageUrl(c.getImageUrl());
+           return dto;
+       }).collect(Collectors.toList());
+    }
 
-    //    @Override
-//    public List<CategoryDTO> getAllCategory() {
-//        List<Category> categories=categoryRepository.findAll();
-//        List<CategoryDTO> dtoList=categories.stream().map(c->new CategoryDTO(c.getId(),c.getName(),c.getImageUrl())).toList();
-//        return  dtoList;
-//    }
-
-//    @Override
-//    public CategoryDTO getCategoryById(Long id) {
-//        Category category=categoryRepository.findById(id).orElse(null);
-//        CategoryDTO response=new CategoryDTO(category.getId(),category.getName(),category.getImageUrl());
-//        return response;
-//    }
-//
-//    @Override
-//    public CategoryDTO updateCategory(Long id, CategoryDTO dto) {
-//        Category category=categoryRepository.findById(id).orElse(null);
-//        category.setName(dto.getName());
-//        if(dto.getImageUrl()!=null){
-//            category.setImageUrl(dto.getImageUrl());
-//        }
-//        Category updated=categoryRepository.save(category);
-//        return new CategoryDTO(updated.getId(), updated.getName(),updated.getImageUrl());
-//    }
-//
-//    @Override
-//    public void deleteCategory(Long id) {
-//        Category category=categoryRepository.findById(id).orElse(null);
-////         Optionally delete the file
-//         if(category!=null){
-//             fileStorageService.deleteFile(category.getImageUrl());
-//             categoryRepository.delete(category);
-//         }
-//
-//
-//    }
+    @Override
+    public CategoryDTO getCategoryById(Long id) {
+        Category category=categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
+        CategoryDTO dto=new CategoryDTO();
+        dto.setId(category.getId());
+        dto.setName(category.getName());
+        dto.setDescription(category.getDescription());
+        dto.setImageUrl(category.getImageUrl());
+         return dto;
+    }
 }

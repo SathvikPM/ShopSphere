@@ -11,10 +11,9 @@ import java.util.List;
 public interface CategoryService {
 
     CategoryDTO createCategory(CategoryRequest categoryRequest, MultipartFile file);
-//    List<CategoryDTO> getAllCategory();
-//    CategoryDTO getCategoryById(Long id);
-//    CategoryDTO updateCategory(Long id,CategoryDTO dto);
-//    void deleteCategory(Long id);
+    List<CategoryDTO> getAllCategories();
+    CategoryDTO getCategoryById(Long id);
+
 
 
 }
