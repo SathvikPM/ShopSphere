@@ -14,6 +14,10 @@ public interface CategoryService {
     List<CategoryDTO> getAllCategories();
     CategoryDTO getCategoryById(Long id);
 
+    CategoryDTO updatecategory(Long id,CategoryRequest categoryRequest,MultipartFile file);
+
+    void deleteCategory(Long id);
+
 
 
 }

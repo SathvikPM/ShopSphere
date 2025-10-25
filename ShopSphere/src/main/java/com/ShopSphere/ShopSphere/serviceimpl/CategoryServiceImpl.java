@@ -75,4 +75,41 @@ public class CategoryServiceImpl implements CategoryService {
         dto.setImageUrl(category.getImageUrl());
          return dto;
     }
+
+    @Override
+    public CategoryDTO updatecategory(Long id, CategoryRequest categoryRequest, MultipartFile file) {
+       Category category=categoryRepository.findById(id).orElseThrow(()->new RuntimeException("category not found with id "+id));
+
+       if(categoryRequest.getName() != null && !categoryRequest.getName().equalsIgnoreCase(category.getName())) {
+           boolean exists = categoryRepository.findAll()
+                   .stream().anyMatch(c -> !c.getId().equals(id) && c.getName().equalsIgnoreCase(categoryRequest.getName()));
+           if (exists) {
+               throw new RuntimeException("Category with this name already exists");
+           }
+       }
+
+        category.setName(categoryRequest.getName());
+        category.setDescription(categoryRequest.getDescription());
+
+       if(file!=null && !file.isEmpty()){
+           fileStorageService.deleteFile(category.getImageUrl());
+           String imageUrl=fileStorageService.saveFile(file,"category");
+           category.setImageUrl(imageUrl);
+       }
+       Category updatedcategory=categoryRepository.save(category);
+
+       CategoryDTO categoryDTO=new CategoryDTO(updatedcategory.getId(),updatedcategory.getName(),updatedcategory.getDescription(),updatedcategory.getImageUrl());
+       return categoryDTO;
+
+
+
+    }
+
+    @Override
+    public void deleteCategory(Long id) {
+        Category category=categoryRepository.findById(id).orElseThrow(()->new RuntimeException("category not found with id "+id));
+        fileStorageService.deleteFile(category.getImageUrl());
+        categoryRepository.delete(category);
+
+    }
 }

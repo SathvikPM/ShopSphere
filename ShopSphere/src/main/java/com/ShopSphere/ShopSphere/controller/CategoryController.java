@@ -44,4 +44,19 @@ public class CategoryController {
                 return  ResponseEntity.ok(category);
     }
 
+    @PutMapping(value="/{id}",consumes = {"multipart/form-data"})
+    public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long id,
+                                                      @RequestPart("category") CategoryRequest categoryRequest,
+                                                      @RequestPart(value = "file",required = false)MultipartFile file){
+    CategoryDTO updatedCategory=categoryService.updatecategory(id,categoryRequest,file);
+    return ResponseEntity.ok(updatedCategory);
+
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteCategory(@PathVariable Long id){
+       categoryService.deleteCategory(id);
+       return ResponseEntity.ok("category deleted successfully");
+    }
+
 }
