@@ -1,11 +1,8 @@
 package com.ShopSphere.ShopSphere.controller;
 
-import com.ShopSphere.ShopSphere.dto.CategoryDTO;
-import com.ShopSphere.ShopSphere.dto.CategoryRequest;
-import com.ShopSphere.ShopSphere.repository.CategoryRepository;
+import com.ShopSphere.ShopSphere.dto.CategoryResponseDTO;
+import com.ShopSphere.ShopSphere.dto.CategoryRequestDTO;
 import com.ShopSphere.ShopSphere.service.CategoryService;
-import com.ShopSphere.ShopSphere.serviceimpl.CategoryServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,31 +21,31 @@ public class CategoryController {
     }
 
     @PostMapping(consumes = {"multipart/form-data"})
-    public ResponseEntity<CategoryDTO> createCategory(@RequestPart("category") CategoryRequest categoryRequest,
-                                                      @RequestPart("file") MultipartFile file){
+    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestPart("category") CategoryRequestDTO categoryRequest,
+                                                              @RequestPart("file") MultipartFile file){
 
-        CategoryDTO categoryDTO=categoryService.createCategory(categoryRequest,file);
-        return  ResponseEntity.ok(categoryDTO);
+        CategoryResponseDTO categoryResponseDTO =categoryService.createCategory(categoryRequest,file);
+        return  ResponseEntity.ok(categoryResponseDTO);
 
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryDTO>> getAllCategories(){
-        List<CategoryDTO> categories=categoryService.getAllCategories();
+    public ResponseEntity<List<CategoryResponseDTO>> getAllCategories(){
+        List<CategoryResponseDTO> categories=categoryService.getAllCategories();
         return  ResponseEntity.ok(categories);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable Long id){
-                CategoryDTO category=categoryService.getCategoryById(id);
+    public ResponseEntity<CategoryResponseDTO> getCategoryById(@PathVariable Long id){
+                CategoryResponseDTO category=categoryService.getCategoryById(id);
                 return  ResponseEntity.ok(category);
     }
 
     @PutMapping(value="/{id}",consumes = {"multipart/form-data"})
-    public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long id,
-                                                      @RequestPart("category") CategoryRequest categoryRequest,
-                                                      @RequestPart(value = "file",required = false)MultipartFile file){
-    CategoryDTO updatedCategory=categoryService.updatecategory(id,categoryRequest,file);
+    public ResponseEntity<CategoryResponseDTO> updateCategory(@PathVariable Long id,
+                                                              @RequestPart("category") CategoryRequestDTO categoryRequest,
+                                                              @RequestPart(value = "file",required = false)MultipartFile file){
+    CategoryResponseDTO updatedCategory=categoryService.updatecategory(id, categoryRequest,file);
     return ResponseEntity.ok(updatedCategory);
 
     }

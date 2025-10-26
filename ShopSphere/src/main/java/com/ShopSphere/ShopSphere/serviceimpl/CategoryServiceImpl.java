@@ -1,7 +1,7 @@
 package com.ShopSphere.ShopSphere.serviceimpl;
 
-import com.ShopSphere.ShopSphere.dto.CategoryDTO;
-import com.ShopSphere.ShopSphere.dto.CategoryRequest;
+import com.ShopSphere.ShopSphere.dto.CategoryResponseDTO;
+import com.ShopSphere.ShopSphere.dto.CategoryRequestDTO;
 import com.ShopSphere.ShopSphere.model.Category;
 import com.ShopSphere.ShopSphere.repository.CategoryRepository;
 import com.ShopSphere.ShopSphere.service.CategoryService;
@@ -23,7 +23,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDTO createCategory(CategoryRequest categoryRequest, MultipartFile file) {
+    public CategoryResponseDTO createCategory(CategoryRequestDTO categoryRequest, MultipartFile file) {
         boolean exists=categoryRepository.findAll()
                 .stream()
                         .anyMatch(c->c.getName()
@@ -41,43 +41,43 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category saved=categoryRepository.save(category);
 
-        CategoryDTO categoryDTO=new CategoryDTO();
-        categoryDTO.setId(saved.getId());
-        categoryDTO.setName(category.getName());
-        categoryDTO.setDescription(category.getDescription());
-        categoryDTO.setImageUrl(saved.getImageUrl());
-        return categoryDTO;
+        CategoryResponseDTO categoryResponse =new CategoryResponseDTO();
+        categoryResponse.setId(saved.getId());
+        categoryResponse.setName(category.getName());
+        categoryResponse.setDescription(category.getDescription());
+        categoryResponse.setImageUrl(saved.getImageUrl());
+        return categoryResponse;
 
     }
 
     @Override
-    public List<CategoryDTO> getAllCategories() {
+    public List<CategoryResponseDTO> getAllCategories() {
        List<Category> categories=categoryRepository.findAll();
        return  categories.stream().map(c->{
-           CategoryDTO dto=new CategoryDTO();
-           dto.setName(c.getName());
-           dto.setId(c.getId());
-           dto.setDescription(c.getDescription());
-           dto.setImageUrl(c.getImageUrl());
-           return dto;
+           CategoryResponseDTO categoryResponse=new CategoryResponseDTO();
+           categoryResponse.setName(c.getName());
+           categoryResponse.setId(c.getId());
+           categoryResponse.setDescription(c.getDescription());
+           categoryResponse.setImageUrl(c.getImageUrl());
+           return categoryResponse;
        }).collect(Collectors.toList());
     }
 
 
 
     @Override
-    public CategoryDTO getCategoryById(Long id) {
+    public CategoryResponseDTO getCategoryById(Long id) {
         Category category=categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
-        CategoryDTO dto=new CategoryDTO();
-        dto.setId(category.getId());
-        dto.setName(category.getName());
-        dto.setDescription(category.getDescription());
-        dto.setImageUrl(category.getImageUrl());
-         return dto;
+        CategoryResponseDTO categoryResponse=new CategoryResponseDTO();
+        categoryResponse.setId(category.getId());
+        categoryResponse.setName(category.getName());
+        categoryResponse.setDescription(category.getDescription());
+        categoryResponse.setImageUrl(category.getImageUrl());
+         return categoryResponse;
     }
 
     @Override
-    public CategoryDTO updatecategory(Long id, CategoryRequest categoryRequest, MultipartFile file) {
+    public CategoryResponseDTO updatecategory(Long id, CategoryRequestDTO categoryRequest, MultipartFile file) {
        Category category=categoryRepository.findById(id).orElseThrow(()->new RuntimeException("category not found with id "+id));
 
        if(categoryRequest.getName() != null && !categoryRequest.getName().equalsIgnoreCase(category.getName())) {
@@ -98,8 +98,8 @@ public class CategoryServiceImpl implements CategoryService {
        }
        Category updatedcategory=categoryRepository.save(category);
 
-       CategoryDTO categoryDTO=new CategoryDTO(updatedcategory.getId(),updatedcategory.getName(),updatedcategory.getDescription(),updatedcategory.getImageUrl());
-       return categoryDTO;
+       CategoryResponseDTO categoryResponse =new CategoryResponseDTO(updatedcategory.getId(),updatedcategory.getName(),updatedcategory.getDescription(),updatedcategory.getImageUrl());
+       return categoryResponse;
 
 
 
