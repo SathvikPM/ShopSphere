@@ -1,8 +1,15 @@
 package com.ShopSphere.ShopSphere.dto;
 
 import com.ShopSphere.ShopSphere.model.ProductStatus;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProductResponseDTO {
 
     private Long id;

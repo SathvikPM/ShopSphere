@@ -3,6 +3,9 @@ package com.ShopSphere.ShopSphere.serviceimpl;
 import com.ShopSphere.ShopSphere.dto.CategoryResponseDTO;
 import com.ShopSphere.ShopSphere.dto.ProductRequestDTO;
 import com.ShopSphere.ShopSphere.dto.ProductResponseDTO;
+import com.ShopSphere.ShopSphere.model.Category;
+import com.ShopSphere.ShopSphere.model.Product;
+import com.ShopSphere.ShopSphere.model.ProductStatus;
 import com.ShopSphere.ShopSphere.repository.CategoryRepository;
 import com.ShopSphere.ShopSphere.repository.ProductRepository;
 import com.ShopSphere.ShopSphere.service.FileStorageService;
@@ -28,9 +31,46 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponseDTO createProduct(ProductRequestDTO productRequest, MultipartFile file) {
 
-        categoryRepository.findById(productRequest.getCategoryId()).orElseThrow(()->new RuntimeException("Category not found with id: "+productRequest.getCategoryId()));
+        Category category =categoryRepository.findById(productRequest.getCategoryId()).orElseThrow(()->
+                new RuntimeException("Category not found with id: "+productRequest.getCategoryId()));
         if(productRepository.existsByNameIgnoreCase(productRequest.getName())){
             throw new RuntimeException("Product with this name alredy exists");
         }
+
+
+        String imageUrl=fileStorageService.saveFile(file,"product");
+
+
+
+        Product product=new Product();
+        product.setName(productRequest.getName());
+        product.setDescription(productRequest.getDescription());
+        product.setImageUrl(imageUrl);
+        product.setBrand(productRequest.getBrand());
+        product.setDiscount(productRequest.getDiscount());
+        product.setCategory(category);
+        product.setPrice(productRequest.getPrice());
+        product.setStatus(productRequest.getStatus());
+        product.setStockQuantity(productRequest.getStockQuantity());
+        product.setRating(productRequest.getRating());
+
+        Product saved =productRepository.save(product);
+
+        ProductResponseDTO dto=new ProductResponseDTO();
+        dto.setId(saved.getId());
+        dto.setName(saved.getName());
+        dto.setDescription(saved.getDescription());
+        dto.setImageUrl(saved.getImageUrl());
+        dto.setBrand(saved.getBrand());
+        dto.setDiscount(saved.getDiscount());
+        dto.setCategoryName(saved.getName());
+        dto.setPrice(saved.getPrice());
+        dto.setStatus(saved.getStatus());
+        dto.setStockQuantity(saved.getStockQuantity());
+        dto.setRating(saved.getRating());
+
+
+        return  dto;
+
     }
 }

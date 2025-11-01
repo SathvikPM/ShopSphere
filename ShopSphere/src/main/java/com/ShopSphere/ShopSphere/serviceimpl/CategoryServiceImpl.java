@@ -24,12 +24,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponseDTO createCategory(CategoryRequestDTO categoryRequest, MultipartFile file) {
-        boolean exists=categoryRepository.findAll()
-                .stream()
-                        .anyMatch(c->c.getName()
-                        .equalsIgnoreCase(categoryRequest.getName()));
-        if(exists){
-            throw new RuntimeException("Category already exists");
+//
+        if(categoryRepository.existsByNameIgnoreCase(categoryRequest.getName())){
+            throw new RuntimeException("Category Alredy Exists");
         }
         String imageUrl=fileStorageService.saveFile(file, "category");
 
