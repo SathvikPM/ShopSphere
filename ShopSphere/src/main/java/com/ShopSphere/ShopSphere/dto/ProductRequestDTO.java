@@ -26,9 +26,6 @@ public class ProductRequestDTO {
 
     private Integer stockQuantity;
 
-    private String imageUrl;
-
-    private List<String> additionalImages;
 
     private String brand;
 

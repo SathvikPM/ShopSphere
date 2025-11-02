@@ -11,8 +11,13 @@ import com.ShopSphere.ShopSphere.repository.ProductRepository;
 import com.ShopSphere.ShopSphere.service.FileStorageService;
 import com.ShopSphere.ShopSphere.service.ProductService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
 public class ProductServiceImpl implements ProductService {
 
     private final CategoryRepository categoryRepository;
@@ -29,7 +34,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponseDTO createProduct(ProductRequestDTO productRequest, MultipartFile file) {
+    public ProductResponseDTO createProduct(ProductRequestDTO productRequest, MultipartFile image, List<MultipartFile> additionalImages) {
 
         Category category =categoryRepository.findById(productRequest.getCategoryId()).orElseThrow(()->
                 new RuntimeException("Category not found with id: "+productRequest.getCategoryId()));
@@ -38,14 +43,24 @@ public class ProductServiceImpl implements ProductService {
         }
 
 
-        String imageUrl=fileStorageService.saveFile(file,"product");
+        String imageUrl=fileStorageService.saveFile(image,"product");
 
 
+        List<String> additionalImageUrls=new ArrayList<>();
+        if(additionalImages!=null &&  !additionalImages.isEmpty()){
+            for(MultipartFile file:additionalImages){
+              String filepath=fileStorageService.saveFile(file,"product");
+              additionalImageUrls.add(filepath);
+            }
+        }
 
         Product product=new Product();
+
+
         product.setName(productRequest.getName());
         product.setDescription(productRequest.getDescription());
         product.setImageUrl(imageUrl);
+        product.setAdditionalImages(additionalImageUrls);
         product.setBrand(productRequest.getBrand());
         product.setDiscount(productRequest.getDiscount());
         product.setCategory(category);
@@ -54,6 +69,7 @@ public class ProductServiceImpl implements ProductService {
         product.setStockQuantity(productRequest.getStockQuantity());
         product.setRating(productRequest.getRating());
 
+
         Product saved =productRepository.save(product);
 
         ProductResponseDTO dto=new ProductResponseDTO();
@@ -61,6 +77,7 @@ public class ProductServiceImpl implements ProductService {
         dto.setName(saved.getName());
         dto.setDescription(saved.getDescription());
         dto.setImageUrl(saved.getImageUrl());
+        dto.setAdditionalImages(additionalImageUrls);
         dto.setBrand(saved.getBrand());
         dto.setDiscount(saved.getDiscount());
         dto.setCategoryName(saved.getName());
