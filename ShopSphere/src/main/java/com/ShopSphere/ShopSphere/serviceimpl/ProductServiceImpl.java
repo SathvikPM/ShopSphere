@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -88,6 +89,29 @@ public class ProductServiceImpl implements ProductService {
 
 
         return  dto;
+
+    }
+
+    @Override
+    public List<ProductResponseDTO> getAllProducts() {
+        List<Product> products =productRepository.findAll();
+        return  products.stream().map(p-> {
+            ProductResponseDTO productResponse = new ProductResponseDTO();
+            productResponse.setName(p.getName());
+            productResponse.setId(p.getId());
+            productResponse.setBrand(p.getBrand());
+            productResponse.setDiscount(p.getDiscount());
+            productResponse.setRating(p.getRating());
+            productResponse.setPrice(p.getPrice());
+            productResponse.setStatus(p.getStatus());
+            productResponse.setStockQuantity(p.getStockQuantity());
+            productResponse.setCategoryName(p.getCategory() != null ? p.getName() : null);
+            productResponse.setImageUrl(p.getImageUrl());
+            productResponse.setAdditionalImages(p.getAdditionalImages());
+            productResponse.setDescription(p.getDescription());
+            return productResponse;
+        }).collect(Collectors.toList());
+
 
     }
 }

@@ -12,4 +12,5 @@ import java.util.List;
 public interface ProductService {
 
     ProductResponseDTO createProduct(ProductRequestDTO productRequest, MultipartFile image, List<MultipartFile> additionalImages);
+    List<ProductResponseDTO> getAllProducts();
 }
