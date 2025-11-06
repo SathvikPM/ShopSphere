@@ -45,7 +45,7 @@ public class CategoryController {
     public ResponseEntity<CategoryResponseDTO> updateCategory(@PathVariable Long id,
                                                               @RequestPart("category") CategoryRequestDTO categoryRequest,
                                                               @RequestPart(value = "file",required = false)MultipartFile file){
-    CategoryResponseDTO updatedCategory=categoryService.updatecategory(id, categoryRequest,file);
+    CategoryResponseDTO updatedCategory=categoryService.updateCategory(id, categoryRequest,file);
     return ResponseEntity.ok(updatedCategory);
 
     }

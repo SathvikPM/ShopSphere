@@ -114,4 +114,111 @@ public class ProductServiceImpl implements ProductService {
 
 
     }
+
+    @Override
+    public List<ProductResponseDTO> getProductsByCategory(Long id){
+        List<Product> products=productRepository.findByCategoryId(id);
+        return  products.stream().map(p-> {
+            ProductResponseDTO productResponse = new ProductResponseDTO();
+            productResponse.setName(p.getName());
+            productResponse.setId(p.getId());
+            productResponse.setBrand(p.getBrand());
+            productResponse.setDiscount(p.getDiscount());
+            productResponse.setRating(p.getRating());
+            productResponse.setPrice(p.getPrice());
+            productResponse.setStatus(p.getStatus());
+            productResponse.setStockQuantity(p.getStockQuantity());
+            productResponse.setCategoryName(p.getCategory() != null ? p.getName() : null);
+            productResponse.setImageUrl(p.getImageUrl());
+            productResponse.setAdditionalImages(p.getAdditionalImages());
+            productResponse.setDescription(p.getDescription());
+            return productResponse;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public ProductResponseDTO getProductById(Long id) {
+        Product product=productRepository.findById(id).orElseThrow(()->new RuntimeException("Product not found with id: "+id));
+        ProductResponseDTO productResponse=new ProductResponseDTO();
+        productResponse.setId(product.getId());
+        productResponse.setName(product.getName());
+        productResponse.setDescription(product.getDescription());
+        productResponse.setImageUrl(product.getImageUrl());
+        productResponse.setAdditionalImages(product.getAdditionalImages());
+        productResponse.setBrand(product.getBrand());
+        productResponse.setDiscount(product.getDiscount());
+        productResponse.setCategoryName(product.getCategory().getName());
+        productResponse.setPrice(product.getPrice());
+        productResponse.setStatus(product.getStatus());
+        productResponse.setStockQuantity(product.getStockQuantity());
+        productResponse.setRating(product.getRating());
+        return  productResponse;
+    }
+
+    public ProductResponseDTO updateProduct(Long id,ProductRequestDTO productRequest,MultipartFile image, List<MultipartFile> additionalImages){
+
+        Product product=productRepository.findById(id).orElseThrow(()->new RuntimeException("category not found with id"+ id));
+        if(productRequest.getName()!=null && !productRequest.getName().equalsIgnoreCase(product.getName())){
+            boolean exists=productRepository.findAll()
+                    .stream().anyMatch(p->!p.getId().equals(id) && p.getName().equalsIgnoreCase(productRequest.getName()));
+            if(exists){
+                throw new RuntimeException("product with this name alredy Exists");
+            }
+        }
+
+        if(image!=null && !image.isEmpty()){
+            fileStorageService.deleteFile(product.getImageUrl());
+            String imageUrl=fileStorageService.saveFile(image,"product");
+            product.setImageUrl(imageUrl);
+        }
+        List additionalImageUrls=null;
+        if(!additionalImages.isEmpty() && additionalImages!=null){
+            List<String> additionalImages1=product.getAdditionalImages();
+            for(String image1:additionalImages1){
+                fileStorageService.deleteFile(image1);
+            }
+            for(MultipartFile file:additionalImages){
+                String filepath=fileStorageService.saveFile(file,"product");
+                additionalImageUrls.add(filepath);
+            }
+        }
+
+        product.setName(productRequest.getName());
+        Category category=categoryRepository.findById(productRequest.getCategoryId()).orElseThrow(()->
+                new RuntimeException("Category not found with id: "+productRequest.getCategoryId()));
+        product.setCategory(category);
+        product.setName(productRequest.getName());
+        product.setDescription(productRequest.getDescription());
+        product.setBrand(productRequest.getBrand());
+        product.setDiscount(productRequest.getDiscount());
+        product.setCategory(category);
+        product.setPrice(productRequest.getPrice());
+        product.setStatus(productRequest.getStatus());
+        product.setStockQuantity(productRequest.getStockQuantity());
+        product.setRating(productRequest.getRating());
+        Product saved=productRepository.save(product);
+
+        ProductResponseDTO dto=new ProductResponseDTO();
+        dto.setId(saved.getId());
+        dto.setName(saved.getName());
+        dto.setDescription(saved.getDescription());
+        dto.setImageUrl(saved.getImageUrl());
+        dto.setAdditionalImages(additionalImageUrls);
+        dto.setBrand(saved.getBrand());
+        dto.setDiscount(saved.getDiscount());
+        dto.setCategoryName(saved.getName());
+        dto.setPrice(saved.getPrice());
+        dto.setStatus(saved.getStatus());
+        dto.setStockQuantity(saved.getStockQuantity());
+        dto.setRating(saved.getRating());
+
+
+        return  dto;
+    }
+
+    public void deleteProduct(Long id){
+        Product product=productRepository.findById(id).orElseThrow(()->
+                new RuntimeException("Category not found with id: "+ id));
+        productRepository.delete(product);
+    }
 }

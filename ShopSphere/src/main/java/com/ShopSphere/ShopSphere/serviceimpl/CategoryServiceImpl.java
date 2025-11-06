@@ -74,7 +74,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponseDTO updatecategory(Long id, CategoryRequestDTO categoryRequest, MultipartFile file) {
+    public CategoryResponseDTO updateCategory(Long id, CategoryRequestDTO categoryRequest, MultipartFile file) {
        Category category=categoryRepository.findById(id).orElseThrow(()->new RuntimeException("category not found with id "+id));
 
        if(categoryRequest.getName() != null && !categoryRequest.getName().equalsIgnoreCase(category.getName())) {

@@ -13,4 +13,12 @@ public interface ProductService {
 
     ProductResponseDTO createProduct(ProductRequestDTO productRequest, MultipartFile image, List<MultipartFile> additionalImages);
     List<ProductResponseDTO> getAllProducts();
+
+    List<ProductResponseDTO> getProductsByCategory(Long id);
+
+    ProductResponseDTO getProductById(Long id);
+
+    ProductResponseDTO updateProduct(Long id,ProductRequestDTO productRequest,MultipartFile image, List<MultipartFile> additionalImages);
+
+    void deleteProduct(Long id);
 }
