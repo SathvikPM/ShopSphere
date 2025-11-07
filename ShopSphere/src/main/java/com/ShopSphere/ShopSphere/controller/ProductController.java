@@ -40,4 +40,27 @@ public class ProductController {
         List<ProductResponseDTO> products=productService.getAllProducts();
         return ResponseEntity.ok(products);
     }
+    @GetMapping({"/{id}"})
+    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable  Long id){
+        ProductResponseDTO productResponse=productService.getProductById(id);
+        return ResponseEntity.ok(productResponse);
+    }
+
+    @PutMapping(value = "/{id}",consumes = {"multipart/form-data"})
+    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable Long id,@RequestPart("product") ProductRequestDTO productRequest,
+                                                            @RequestPart(value="image",required = false)MultipartFile image,
+                                                            @RequestPart(value = "additionalImages",required = false)List<MultipartFile> additionalImages){
+        ProductResponseDTO productResponse=productService.updateProduct(id,productRequest,image,additionalImages);
+        return ResponseEntity.ok(productResponse);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable Long id){
+        productService.deleteProduct(id);
+        return ResponseEntity.ok("Product Deleted Sucessfully");
+    }
+
+
+
+
 }

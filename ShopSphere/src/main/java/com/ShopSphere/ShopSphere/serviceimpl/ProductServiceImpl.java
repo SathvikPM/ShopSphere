@@ -81,7 +81,7 @@ public class ProductServiceImpl implements ProductService {
         dto.setAdditionalImages(additionalImageUrls);
         dto.setBrand(saved.getBrand());
         dto.setDiscount(saved.getDiscount());
-        dto.setCategoryName(saved.getName());
+        dto.setCategoryName(saved.getCategory().getName());
         dto.setPrice(saved.getPrice());
         dto.setStatus(saved.getStatus());
         dto.setStockQuantity(saved.getStockQuantity());
@@ -105,7 +105,7 @@ public class ProductServiceImpl implements ProductService {
             productResponse.setPrice(p.getPrice());
             productResponse.setStatus(p.getStatus());
             productResponse.setStockQuantity(p.getStockQuantity());
-            productResponse.setCategoryName(p.getCategory() != null ? p.getName() : null);
+            productResponse.setCategoryName(p.getCategory() != null ? p.getCategory().getName() : null);
             productResponse.setImageUrl(p.getImageUrl());
             productResponse.setAdditionalImages(p.getAdditionalImages());
             productResponse.setDescription(p.getDescription());
@@ -128,7 +128,7 @@ public class ProductServiceImpl implements ProductService {
             productResponse.setPrice(p.getPrice());
             productResponse.setStatus(p.getStatus());
             productResponse.setStockQuantity(p.getStockQuantity());
-            productResponse.setCategoryName(p.getCategory() != null ? p.getName() : null);
+            productResponse.setCategoryName(p.getCategory() != null ? p.getCategory().getName() : null);
             productResponse.setImageUrl(p.getImageUrl());
             productResponse.setAdditionalImages(p.getAdditionalImages());
             productResponse.setDescription(p.getDescription());
@@ -158,20 +158,25 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponseDTO updateProduct(Long id,ProductRequestDTO productRequest,MultipartFile image, List<MultipartFile> additionalImages){
 
         Product product=productRepository.findById(id).orElseThrow(()->new RuntimeException("category not found with id"+ id));
-        if(productRequest.getName()!=null && !productRequest.getName().equalsIgnoreCase(product.getName())){
-            boolean exists=productRepository.findAll()
-                    .stream().anyMatch(p->!p.getId().equals(id) && p.getName().equalsIgnoreCase(productRequest.getName()));
-            if(exists){
-                throw new RuntimeException("product with this name alredy Exists");
-            }
+//        if(productRequest.getName()!=null && !productRequest.getName().equalsIgnoreCase(product.getName())){
+//            boolean exists=productRepository.findAll()
+//                    .stream().anyMatch(p->!p.getId().equals(id) && p.getName().equalsIgnoreCase(productRequest.getName()));
+//            if(exists){
+//                throw new RuntimeException("product with this name alredy Exists");
+//            }
+//        }
+        if (productRepository.existsByNameIgnoreCase(productRequest.getName()) &&
+                !productRequest.getName().equalsIgnoreCase(product.getName())) {
+            throw new RuntimeException("Product with this name already exists");
         }
+
 
         if(image!=null && !image.isEmpty()){
             fileStorageService.deleteFile(product.getImageUrl());
             String imageUrl=fileStorageService.saveFile(image,"product");
             product.setImageUrl(imageUrl);
         }
-        List additionalImageUrls=null;
+        List additionalImageUrls=new ArrayList<>();
         if(!additionalImages.isEmpty() && additionalImages!=null){
             List<String> additionalImages1=product.getAdditionalImages();
             for(String image1:additionalImages1){
@@ -196,6 +201,7 @@ public class ProductServiceImpl implements ProductService {
         product.setStatus(productRequest.getStatus());
         product.setStockQuantity(productRequest.getStockQuantity());
         product.setRating(productRequest.getRating());
+        product.setAdditionalImages(additionalImageUrls);
         Product saved=productRepository.save(product);
 
         ProductResponseDTO dto=new ProductResponseDTO();
@@ -203,10 +209,10 @@ public class ProductServiceImpl implements ProductService {
         dto.setName(saved.getName());
         dto.setDescription(saved.getDescription());
         dto.setImageUrl(saved.getImageUrl());
-        dto.setAdditionalImages(additionalImageUrls);
+        dto.setAdditionalImages(saved.getAdditionalImages());
         dto.setBrand(saved.getBrand());
         dto.setDiscount(saved.getDiscount());
-        dto.setCategoryName(saved.getName());
+        dto.setCategoryName(saved.getCategory().getName());
         dto.setPrice(saved.getPrice());
         dto.setStatus(saved.getStatus());
         dto.setStockQuantity(saved.getStockQuantity());
@@ -218,7 +224,12 @@ public class ProductServiceImpl implements ProductService {
 
     public void deleteProduct(Long id){
         Product product=productRepository.findById(id).orElseThrow(()->
-                new RuntimeException("Category not found with id: "+ id));
+                new RuntimeException("Product not found with id: "+ id));
+        fileStorageService.deleteFile(product.getImageUrl());
+        List<String> additionalImages=product.getAdditionalImages();
+        for(String additionalImage:additionalImages){
+            fileStorageService.deleteFile(additionalImage);
+        }
         productRepository.delete(product);
     }
 }
