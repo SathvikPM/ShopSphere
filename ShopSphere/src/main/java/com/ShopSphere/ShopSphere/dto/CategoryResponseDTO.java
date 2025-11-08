@@ -12,7 +12,7 @@ public class CategoryResponseDTO {
 
     private Long id;
 
-    @NotBlank(message = "Category name is mandatory")
+
     private String name;
 
     private String description;

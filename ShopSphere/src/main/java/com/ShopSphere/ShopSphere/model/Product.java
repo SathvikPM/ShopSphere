@@ -17,7 +17,6 @@ import java.util.List;
 @Data
 public class Product extends BaseEntity implements Serializable {
 
-    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +38,10 @@ public class Product extends BaseEntity implements Serializable {
     private String imageUrl;
 
     @ElementCollection
+    @CollectionTable(
+            name = "product_additional_images",
+            joinColumns = @JoinColumn(name = "product_id")
+    )
     private List<String> additionalImages;
 
     private String brand;
@@ -48,7 +51,7 @@ public class Product extends BaseEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 }

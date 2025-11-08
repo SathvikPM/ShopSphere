@@ -14,10 +14,12 @@ import java.util.List;
 @NoArgsConstructor
 public class ProductRequestDTO {
 
-    @NotBlank(message = "Product name is mandatory")
+
+    @NotBlank
     private String name;
 
     private String description;
+
 
     @NotNull
     private Double price;
@@ -33,6 +35,7 @@ public class ProductRequestDTO {
 
     private ProductStatus status;
 
-    @NotNull(message = "Category ID is required")
+
+    @NotNull
     private Long categoryId; // ✅ only store ID, not full object
 }

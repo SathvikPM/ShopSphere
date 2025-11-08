@@ -3,6 +3,7 @@ package com.ShopSphere.ShopSphere.controller;
 import com.ShopSphere.ShopSphere.dto.CategoryResponseDTO;
 import com.ShopSphere.ShopSphere.dto.CategoryRequestDTO;
 import com.ShopSphere.ShopSphere.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +22,7 @@ public class CategoryController {
     }
 
     @PostMapping(consumes = {"multipart/form-data"})
-    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestPart("category") CategoryRequestDTO categoryRequest,
+    public ResponseEntity<CategoryResponseDTO> createCategory(@Valid  @RequestPart("category") CategoryRequestDTO categoryRequest,
                                                               @RequestPart("file") MultipartFile file){
 
         CategoryResponseDTO categoryResponseDTO =categoryService.createCategory(categoryRequest,file);
@@ -43,7 +44,7 @@ public class CategoryController {
 
     @PutMapping(value="/{id}",consumes = {"multipart/form-data"})
     public ResponseEntity<CategoryResponseDTO> updateCategory(@PathVariable Long id,
-                                                              @RequestPart("category") CategoryRequestDTO categoryRequest,
+                                                              @Valid @RequestPart("category") CategoryRequestDTO categoryRequest,
                                                               @RequestPart(value = "file",required = false)MultipartFile file){
     CategoryResponseDTO updatedCategory=categoryService.updateCategory(id, categoryRequest,file);
     return ResponseEntity.ok(updatedCategory);

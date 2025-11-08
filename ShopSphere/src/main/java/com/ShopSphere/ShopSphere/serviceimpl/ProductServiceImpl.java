@@ -171,13 +171,13 @@ public class ProductServiceImpl implements ProductService {
         }
 
 
-        if(image!=null && !image.isEmpty()){
+        if( !image.isEmpty() && image!=null ){
             fileStorageService.deleteFile(product.getImageUrl());
             String imageUrl=fileStorageService.saveFile(image,"product");
             product.setImageUrl(imageUrl);
         }
         List additionalImageUrls=new ArrayList<>();
-        if(!additionalImages.isEmpty() && additionalImages!=null){
+        if( additionalImages!=null && !additionalImages.isEmpty() ){
             List<String> additionalImages1=product.getAdditionalImages();
             for(String image1:additionalImages1){
                 fileStorageService.deleteFile(image1);
