@@ -11,6 +11,7 @@ import java.io.Serializable;
 
 
 @Entity
+@Table(name = "Category")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
