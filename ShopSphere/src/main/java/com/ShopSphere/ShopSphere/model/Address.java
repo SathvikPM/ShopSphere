@@ -1,6 +1,7 @@
 package com.ShopSphere.ShopSphere.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,11 +18,19 @@ public class Address extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotNull
     private String street;
+    @NotNull
     private String city;
+    @NotNull
     private String state;
+    @NotNull
     private String country;
+    @NotNull
      private String pincode;
-     private String type;
+
+    @Enumerated(EnumType.STRING)
+    @NotNull
+     private AddressType type;
 
 }

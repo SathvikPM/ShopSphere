@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ProductRequestDTO {
 
-
+private Long id;
     @NotBlank
     private String name;
 

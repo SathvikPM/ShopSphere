@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryRequestDTO {
-
+    private Long id;
     @NotBlank(message = "Category name is mandatory")
-    String name;
-    String description;
+    private String name;
+    private String description;
 }
