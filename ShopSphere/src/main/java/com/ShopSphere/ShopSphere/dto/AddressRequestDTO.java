@@ -30,7 +30,7 @@ public class AddressRequestDTO {
     @NotBlank(message = "Pincode is mandatory")
     private String pincode;
 
-    @NotBlank
+    @NotNull(message = "Address type is mandatory")
     private AddressType type;
 
 }
