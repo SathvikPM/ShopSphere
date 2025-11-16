@@ -17,7 +17,7 @@ public interface AddressService {
 
     AddressResponseDTO updateAddress(Long id,AddressRequestDTO addressRequest);
 
-    void deleteAddress();
+    void deleteAddress(Long id);
 
 
 }

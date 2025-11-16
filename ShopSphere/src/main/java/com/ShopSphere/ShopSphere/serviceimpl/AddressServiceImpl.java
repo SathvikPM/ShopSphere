@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AddressServiceImpl implements AddressService {
@@ -55,21 +56,52 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public List<AddressResponseDTO> getAllAddress() {
-        return null;
+        List<Address> addresses=addressRepository.findAll();
+//        return addresses.stream().map(a->{
+//            AddressResponseDTO addressResponse=new AddressResponseDTO();
+//            addressResponse.setId(a.getId());
+//            addressResponse.setStreet(a.getStreet());
+//            addressResponse.setType(a.getType());
+//            addressResponse.setState(a.getState());
+//            addressResponse.setPincode(a.getPincode());
+//            addressResponse.setCity(a.getCity());
+//            addressResponse.setCountry(a.getCountry());
+//            return addressResponse;
+//        }).collect(Collectors.toList());
+        return addresses.stream()
+                .map(a -> modelMapper.map(a, AddressResponseDTO.class))
+                .collect(Collectors.toList());
+
+
     }
 
     @Override
     public AddressResponseDTO getAddressById(Long id) {
-        return null;
+
+        Address address=addressRepository.findById(id).orElseThrow(()->new RuntimeException("Address not found with id: "+id));
+        AddressResponseDTO addressResponse=modelMapper.map(address,AddressResponseDTO.class);
+        return  addressResponse;
     }
 
     @Override
     public AddressResponseDTO updateAddress(Long id, AddressRequestDTO addressRequest) {
-        return null;
+        Address address=addressRepository.findById(id).orElseThrow(()->new RuntimeException("address not found with id"+id));
+        address.setType(addressRequest.getType());
+        address.setCity(addressRequest.getCity());
+        address.setStreet(addressRequest.getStreet());
+        address.setState(addressRequest.getState());
+        address.setPincode(addressRequest.getPincode());
+        address.setCountry(addressRequest.getCountry());
+        Address updated=addressRepository.save(address);
+
+        AddressResponseDTO addressResponse=modelMapper.map(updated,AddressResponseDTO.class);
+        return  addressResponse;
     }
 
     @Override
-    public void deleteAddress() {
-
+    public void deleteAddress(Long id) {
+                 Address address=addressRepository.findById(id).orElseThrow(()->
+                         new RuntimeException("Address not found with id: "+ id));
+                 addressRepository.delete(address);
     }
 }
