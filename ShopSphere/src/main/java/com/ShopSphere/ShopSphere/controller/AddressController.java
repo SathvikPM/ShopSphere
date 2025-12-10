@@ -17,6 +17,7 @@ public class AddressController {
 
     public  final AddressService addressService;
     public AddressController(AddressService addressService){
+
         this.addressService = addressService;
     }
 
@@ -39,7 +40,17 @@ public class AddressController {
         return  ResponseEntity.ok(addressResponse);
     }
 
-    public ResponseEntity<AddressResponseDTO> updateAddress(@PathVariable Long id,@RequestBody )
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<AddressResponseDTO> updateAddress(@PathVariable Long id,@RequestBody AddressRequestDTO addressRequest){
+        AddressResponseDTO addressResponse=addressService.updateAddress(id,addressRequest);
+        return  ResponseEntity.ok(addressResponse);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteAddress(@PathVariable Long id){
+        addressService.deleteAddress(id);
+        return ResponseEntity.ok("Address Delete Sucessfully");
+    }
 
 
 
