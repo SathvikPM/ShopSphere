@@ -6,13 +6,16 @@ import com.ShopSphere.ShopSphere.model.Category;
 import com.ShopSphere.ShopSphere.repository.CategoryRepository;
 import com.ShopSphere.ShopSphere.service.CategoryService;
 import com.ShopSphere.ShopSphere.service.FileStorageService;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
@@ -48,6 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CategoryResponseDTO> getAllCategories() {
        List<Category> categories=categoryRepository.findAll();
        return  categories.stream().map(c->{
@@ -63,6 +67,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     @Override
+    @Transactional(readOnly = true)
     public CategoryResponseDTO getCategoryById(Long id) {
         Category category=categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
         CategoryResponseDTO categoryResponse=new CategoryResponseDTO();
