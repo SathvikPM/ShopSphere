@@ -12,6 +12,7 @@ import com.ShopSphere.ShopSphere.service.FileStorageService;
 import com.ShopSphere.ShopSphere.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ProductServiceImpl implements ProductService {
 
     private final CategoryRepository categoryRepository;
@@ -93,6 +95,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProductResponseDTO> getAllProducts() {
         List<Product> products =productRepository.findAll();
         return  products.stream().map(p-> {
@@ -116,6 +119,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProductResponseDTO> getProductsByCategory(Long id){
         List<Product> products=productRepository.findByCategoryId(id);
         return  products.stream().map(p-> {
@@ -137,6 +141,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProductResponseDTO getProductById(Long id) {
         Product product=productRepository.findById(id).orElseThrow(()->new RuntimeException("Product not found with id: "+id));
         ProductResponseDTO productResponse=new ProductResponseDTO();
@@ -154,6 +159,8 @@ public class ProductServiceImpl implements ProductService {
         productResponse.setRating(product.getRating());
         return  productResponse;
     }
+
+
 
     public ProductResponseDTO updateProduct(Long id,ProductRequestDTO productRequest,MultipartFile image, List<MultipartFile> additionalImages){
 

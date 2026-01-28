@@ -7,11 +7,13 @@ import com.ShopSphere.ShopSphere.repository.AddressRepository;
 import com.ShopSphere.ShopSphere.service.AddressService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class AddressServiceImpl implements AddressService {
 
     private final AddressRepository addressRepository;
